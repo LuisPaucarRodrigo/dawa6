@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat con Socket.IO</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>.chat-window {
+      width: 400px;
+      height: 500px;
+      border: 1px solid #ddd;
+      margin: 50px auto;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+    
+    .chat-header {
+      background-color: #075e54;
+      color: #fff;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .chat-title {
+      font-size: 18px;
+      font-weight: bold;
+      justify-content: flex-start;
+    }
+    
+    .chat-actions button {
+      background-color: transparent;
+      border: none;
+      color: #fff;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    
+    .chat-body {
+      height: 380px;
+      overflow-y: scroll;
+      padding: 10px;
+    }
+    
+    .message {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+    
+    .message-avatar img {
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+    }
+    
+    .message-text {
+      background-color: #fff;
+      padding: 8px 10px;
+      border-radius: 10px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    
+    .message.received.right{
+      justify-content: flex-end;
+    }
+
+    .received .message-text {
+      background-color: #f1f0f0;
+    }
+    
+    .message-timestamp {
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+    
+    .chat-footer {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+    }
+    
+    .chat-footer input[type="text"] {
+      flex: 1;
+      border: none;
+      border-radius: 20
+    }</style>
+    <script>
+        // Conexión de Socket.IO al servidor
+        var socket = io();
+        function enviarDate1(){
+            var username1 = document.getElementById('username1').value;
+            var archivo = document.getElementById('imagen1').files[0];
+            var lector = new FileReader();
+            lector.readAsDataURL(archivo);
+            lector.onloadend = function () {
+              socket.emit('date 1',username1,lector.result);
+            } 
+            document.getElementById('username1').value = '';
+            return false
+        }
+        // Función para enviar mensajes del chat 1
+        function enviarMensaje1() {
+            var mensaje = document.getElementById('mensaje1').value;
+            var fecha = new Date();
+            var hora = fecha.getHours();
+            var minutos = fecha.getMinutes();
+            var messagehora = fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+            socket.emit('chat message 1', mensaje,messagehora);
+            document.getElementById('mensaje1').value = '';
+            return false;
+        }
+        socket.on('dateimage1', function(name,image){
+            var imagen = new Image();
+            imagen.src = image;
+            document.getElementById("imagen4").src = imagen.src;
+            var nametitle = document.getElementById('nametitle1');
+            nametitle.textContent = name
+        });
+        // Función para recibir mensajes del chat 1
+        socket.on('chat message 1', function(msg,hora){
+            
+            // var listaMensajes = document.getElementById('lista-mensajes');
+            // var mensaje = document.createElement('p');
+            
+            
+            // mensaje.textContent = msg+" "+hora;
+            // listaMensajes.appendChild(mensaje);
+          //   <div class="message received left" >
+          // <!-- <div class="message-avatar">
+          //   <img id="imagen4">
+          // </div> -->
+          // <div class="message-content"  >
+          //   <div  class="message-text">mensajes</div>
+          //   <div class="message-timestamp">10:15 AM</div>
+          // </div>
+
+            var listaMensajes = document.getElementById('lista-mensajes');
+            var nuevoMensaje = document.createElement('div');
+            nuevoMensaje.className = 'message received left';
+
+
+            var contenidoMensaje = document.createElement('div');
+            contenidoMensaje.className = 'message-content';
+
+            // Crear el div para el texto del mensaje
+            var textoMensaje = document.createElement('div');
+            textoMensaje.className = 'message-text';
+            textoMensaje.textContent = msg;
+
+            // Crear el div para la marca de tiempo del mensaje
+            var marcaDeTiempo = document.createElement('div');
+            marcaDeTiempo.className = 'message-timestamp';
+            marcaDeTiempo.textContent = hora;
+
+            // Agregar el texto del mensaje y la marca de tiempo al div del contenido del mensaje
+            contenidoMensaje.appendChild(textoMensaje);
+            contenidoMensaje.appendChild(marcaDeTiempo);
+
+            // Agregar el contenido del mensaje al mensaje
+            nuevoMensaje.appendChild(contenidoMensaje);
+
+            // Agregar el mensaje a la lista de mensajes
+            listaMensajes.appendChild(nuevoMensaje);
+
+
+            
+        });
+
+        function enviarDate2(){
+            var username2 = document.getElementById('username2').value;
+            var archivo = document.getElementById('imagen2').files[0];
+            var lector = new FileReader();
+            lector.readAsDataURL(archivo);
+            lector.onloadend = function () {
+              socket.emit('date 2',username2,lector.result);
+            } 
+            document.getElementById('username2').value = '';
+            return false
+        }
+
+        // Función para enviar mensajes del chat 2
+        function enviarMensaje2() {
+            var mensaje = document.getElementById('mensaje2').value;
+            var fecha = new Date();
+            var hora = fecha.getHours();
+            var minutos = fecha.getMinutes();
+            var messagehora = fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', hour12: true});
+            socket.emit('chat message 2', mensaje,messagehora);
+            document.getElementById('mensaje2').value = '';
+            return false;
+        }
+
+        socket.on('dateimage2', function(name,image){
+            var imagen = new Image();
+            imagen.src = image;
+            document.getElementById("imagen5").src = imagen.src;
+            var nametitle = document.getElementById('nametitle2');
+            nametitle.textContent = name
+        });
+
+        // Función para recibir mensajes del chat 2
+        socket.on('chat message 2', function(msg,hora){
+            // var listaMensajes = document.getElementById('lista-mensajes');
+            // var mensaje = document.createElement('li');
+            // var imagen = new Image();
+            // imagen.src = image;
+            // document.getElementById("imagen4").src = imagen.src;
+            // mensaje.textContent = name +": " + msg+" "+hora;
+            // listaMensajes.appendChild(mensaje);
+            var listaMensajes = document.getElementById('lista-mensajes');
+            var nuevoMensaje = document.createElement('div');
+            nuevoMensaje.className = 'message received right';
+
+
+            var contenidoMensaje = document.createElement('div');
+            contenidoMensaje.className = 'message-content';
+
+            // Crear el div para el texto del mensaje
+            var textoMensaje = document.createElement('div');
+            textoMensaje.className = 'message-text';
+            textoMensaje.textContent = msg;
+
+            // Crear el div para la marca de tiempo del mensaje
+            var marcaDeTiempo = document.createElement('div');
+            marcaDeTiempo.className = 'message-timestamp';
+            marcaDeTiempo.textContent = hora;
+
+            // Agregar el texto del mensaje y la marca de tiempo al div del contenido del mensaje
+            contenidoMensaje.appendChild(textoMensaje);
+            contenidoMensaje.appendChild(marcaDeTiempo);
+
+            // Agregar el contenido del mensaje al mensaje
+            nuevoMensaje.appendChild(contenidoMensaje);
+
+            // Agregar el mensaje a la lista de mensajes
+            listaMensajes.appendChild(nuevoMensaje);
+        });
+    </script>
+</head>
+<body>
+    <h1>Chat 1</h1>
+    <form onsubmit="return enviarDate1()">
+      <div>
+        <label for="imagen">Ingresa tu nombre:</label>
+        <input type="text" name="username1" id="username1"></input>
+      </div>
+      <div>
+        <label for="imagen">Selecciona una imagen:</label>
+        <input type="file" id="imagen1" name="imagen1">
+      </div>
+      <button>Guardar Datos</button>
+    </form>
+    <!-- <form onsubmit="return enviarMensaje1()">
+        <input id="mensaje1" autocomplete="off" />
+        <button>Enviar</button>
+    </form> -->
+
+    <h1>Chat 2</h1>
+    <form onsubmit="return enviarDate2()">
+      <div>
+        <label for="imagen">Ingresa tu nombre:</label>
+        <input type="text" name="username2" id="username2"></input>
+      </div>
+      <div>
+        <label for="imagen">Selecciona una imagen:</label>
+        <input type="file" id="imagen2" name="imagen2">
+      </div>
+      <button>Guardar Datos</button>
+    </form>
+    <!-- <form onsubmit="return enviarMensaje2()">
+        <input class="message-content" id="mensaje2" autocomplete="off" />
+        <button>Enviar</button>
+    </form> -->
+
+    <h1>Mensajes</h1>
+    <img  >
+    <ul ></ul>
+
+    <div class="chat-window">
+      <div class="chat-header">
+        <div class="message-avatar">
+          <img id="imagen4">
+        </div>
+        <div id="nametitle1" class="chat-title">Chat de ejemplo</div>
+      </div>
+      <div class="chat-body" id="lista-mensajes">
+        
+        <!-- <div class="message sent">
+          <div class="message-content">
+            <div class="message-text">Estoy bien, gracias. ¿Y tú?</div>
+            <div class="message-timestamp">10:17 AM</div>
+          </div>
+          <div class="message-avatar">
+            <img src="https://via.placeholder.com/50x50" alt="Avatar">
+          </div>
+        </div> -->
+        <!-- Agrega más mensajes aquí -->
+      </div>
+      <div class="chat-footer">
+        <form onsubmit="return enviarMensaje1()">
+          <input type="text" placeholder="Escribe un mensaje..." id="mensaje1" autocomplete="off" />
+          <button><i class="fa fa-paper-plane">Enviar</i></button>
+        </form>
+      </div>
+    </div>
+
+
+
+    <div class="chat-window">
+      <div class="chat-header">
+        <div class="message-avatar">
+          <img id="imagen5">
+        </div>
+        <div id="nametitle2" class="chat-title">Chat de ejemplo</div>
+      </div>
+      <div class="chat-body" id="lista-mensajes">
+        
+        <!-- <div class="message sent">
+          <div class="message-content">
+            <div class="message-text">Estoy bien, gracias. ¿Y tú?</div>
+            <div class="message-timestamp">10:17 AM</div>
+          </div>
+          <div class="message-avatar">
+            <img src="https://via.placeholder.com/50x50" alt="Avatar">
+          </div>
+        </div> -->
+        <!-- Agrega más mensajes aquí -->
+      </div>
+      <div class="chat-footer">
+        <form onsubmit="return enviarMensaje2()">
+          <input type="text" placeholder="Escribe un mensaje..." id="mensaje2" autocomplete="off" />
+          <button><i class="fa fa-paper-plane">Enviar</i></button>
+        </form>
+      </div>
+    </div>
+</body>
+</html>
